@@ -34,7 +34,7 @@
 			// SEND /////////////////////////////////////////////////////////////////////
 			var socket = io.connect('http://localhost:1111');
 			var sendOneBit = function () {
-				socket.emit('oneBit', { from: '324324', to: 'dfg32' });
+				socket.emit('oneBit', { to: '123' });
 				document.getElementById("send_one_bit_button").innerHTML = "SEND";
 			};
 			// REGISTER /////////////////////////////////////////////////////////////////

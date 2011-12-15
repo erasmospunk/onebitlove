@@ -32,13 +32,22 @@ io.sockets.on('connection', function (socket) {
     attach(socket, loveNode)
 
     //send to loveNode it's loveId
-    fn({loveId: loveNode.loveId});
+    fn({
+      code    :  201, // Success, Created
+      loveId  :  loveNode.loveId
+    });
 
       //socket.broadcast.emit('announcement', nick + ' connected');
       //io.sockets.emit('nicknames', nicknames);
   });
 
-  socket.on('oneBit', function (toLove) {
+  socket.on('oneBit', function (toLove, fn) {
+    if (!socket.loveNode) {
+      fn({
+        code  :  401, // Client Error, Unauthorized
+        msg   :  "You didn't tell me who you are. Tell me with 'newLove'."
+      });
+    }
     var fromLoveId = socket.loveNode.loveId
     var toLoveNode = getLoveNode(toLove)
   	if (toLoveNode.sockets.length > 0) {
@@ -47,6 +56,8 @@ io.sockets.on('connection', function (socket) {
       });
     }
     toLoveNode.mailBox[fromLoveId] = new Date()
+    // Success, Accepted
+    fn({ code  :  202 });
   });
 
 
