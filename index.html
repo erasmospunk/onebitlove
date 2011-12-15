@@ -43,10 +43,14 @@
 			};*/
 
 			var socket = io.connect('http://192.168.2.7');
-			socket.on('news', function (data) {
+
+			on press button
+
+			socket.emit('one-bit', { from: '324324', to: 'dfg32' });
+/*			socket.on('news', function (data) {
 				console.log(data);
-				socket.emit('my other event', { my: 'data' });
-			});
+				
+			});*/
 		</script>
 	</body>
 </html>
