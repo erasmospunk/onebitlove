@@ -42,10 +42,11 @@
 				var emailtextfield = document.getElementById("register_text_field");
 				var email = emailtextfield.value;
 				email = email.trim();
-				socket.emit('newLove', email, function (loveid) {
-					if ((typeof (loveid) !== "undefined") && (loveid !== null) && (loveid !== "") && (loveid !== " ")) {
+				socket.emit('newLove', email, function (reply) {
+					if ((typeof (reply) !== "undefined") && (reply !== null) && (reply !== "") && (reply !== " ")) {
 						emailtextfield.value = "";
-						document.getElementById("register_message").innerHTML = "Registration Succeed!";
+						//console.log(reply);
+						document.getElementById("register_message").innerHTML = "Registration Succeed! Your \"Love ID\" is: " + reply;
 					} else {
 						emailtextfield.value = "";
 						document.getElementById("register_message").innerHTML = "Registration Failed!";

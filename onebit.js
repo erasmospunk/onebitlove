@@ -30,7 +30,8 @@ io.sockets.on('connection', function (socket) {
       socket.loveId = loveId;
   	}
 
-  	fn({"loveId": lovers[email]});
+    fn(loveId);
+    // fn({"loveId": lovers[loveId]});
 
       //socket.broadcast.emit('announcement', nick + ' connected');
       //io.sockets.emit('nicknames', nicknames);
