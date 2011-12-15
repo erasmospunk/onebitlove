@@ -23,10 +23,10 @@
 			</div>
 
 			<div id="register_view">
-				<form id="register_form" onsubmit="register();">
-					<input id="register_text_field" type="text" value=""/>
-					<input id="register_button" type="submit" value="New Love"/>
-				</form>
+				<!-- <form id="register_form" onsubmit="register();"> -->
+				<input id="register_text_field" type="text" value=""/>
+				<input id="register_button" type="button" value="New Love" onclick="register();"/>
+				<!-- </form> -->
 				<div id="register_message"></div>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 				var email = emailtextfield.value;
 				email = email.trim();
 				socket.emit('newLove', email, function (loveid) {
-					if ((typeof (loveid) !== "undefined") && (loveid !== null) && (loveid !== "")) {
+					if ((typeof (loveid) !== "undefined") && (loveid !== null) && (loveid !== "") && (loveid !== " ")) {
 						emailtextfield.value = "";
 						document.getElementById("register_message").innerHTML = "Registration Succeed!";
 					} else {
