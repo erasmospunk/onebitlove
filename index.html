@@ -46,7 +46,7 @@
 					if ((typeof (reply) !== "undefined") && (reply !== null) && (reply !== "") && (reply !== " ")) {
 						emailtextfield.value = "";
 						//console.log(reply);
-						document.getElementById("register_message").innerHTML = "Registration Succeed! Your \"Love ID\" is: " + reply;
+						document.getElementById("register_message").innerHTML = "Registration Succeed! Your \"Love ID\" is: " + reply.loveId;
 					} else {
 						emailtextfield.value = "";
 						document.getElementById("register_message").innerHTML = "Registration Failed!";
