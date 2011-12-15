@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="el">
+	<head>
+		<meta charset="UTF-8" />
+		<title>One Bit Love</title>
+		<script src="node_modules/socket.io-client/lib/socket.io-client.js"></script>
+	</head>
+	<body>
+		hello
+		<!-- <div id="main_wrapper">
+			<div id="contacts_view">
+				<ul>
+					
+				</ul>
+			</div>
+		</div> -->
+		<script>
+			/*var OBL;
+			OBL = {};
+			OBL.getContacts = function () {
+				if (window.XMLHttpRequest) {
+					var xmlhttp = new XMLHttpRequest();
+				} else {
+					var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function() {
+					if ((xmlhttp.readyState == 4) && (xmlhttp.status == 200)) {
+						var E = xmlhttp.responseText;
+						if (E != null) {
+							E = JSON.parse(E);
+							
+						} else {
+							// no response
+						}
+					} else if ((xmlhttp.readyState == 4) && (xmlhttp.status != 200)) {
+						// wrong page or network error
+						
+					}
+				}
+				xmlhttp.open("POST", "http://192.168.2.7", true);
+				xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+				xmlhttp.send("pointX=" +  + "&pointY=" + );
+			};*/
+
+			var socket = io.connect('http://192.168.2.7');
+			socket.on('news', function (data) {
+				console.log(data);
+				socket.emit('my other event', { my: 'data' });
+			});
+		</script>
+	</body>
+</html>
