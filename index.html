@@ -6,7 +6,7 @@
 		<title>One Bit Love</title>
 		<script src="/socket.io/socket.io.js"></script>
 		<style>
-			#one_bit_button {
+			#send_one_bit_button {
 				margin: 0 auto;
 				width: 100px;
 				height: 100px;
@@ -19,44 +19,105 @@
 		<div id="main_wrapper">
 			<h3>One Bit Love</h3>
 			<div id="send_view">
-				<div id="one_bit_button" onclick="oneBit();"></div>
+				<div id="send_one_bit_button" onclick="sendOneBit();"></div>
+			</div>
+
+			<div id="register_view">
+				<form id="register_form" onsubmit="register();">
+					<input id="register_text_field" type="text" value=""/>
+					<input id="register_button" type="submit" value="New Love"/>
+				</form>
+				<div id="register_message"></div>
 			</div>
 		</div>
 		<script>
-			/*var OBL;
-			OBL = {};
-			OBL.getContacts = function () {
-				if (window.XMLHttpRequest) {
-					var xmlhttp = new XMLHttpRequest();
-				} else {
-					var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-				}
-				xmlhttp.onreadystatechange = function() {
-					if ((xmlhttp.readyState == 4) && (xmlhttp.status == 200)) {
-						var E = xmlhttp.responseText;
-						if (E != null) {
-							E = JSON.parse(E);
-							
-						} else {
-							// no response
-						}
-					} else if ((xmlhttp.readyState == 4) && (xmlhttp.status != 200)) {
-						// wrong page or network error
-						
-					}
-				}
-				xmlhttp.open("POST", "http://192.168.2.7", true);
-				xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-				xmlhttp.send("pointX=" +  + "&pointY=" + );
-			};*/
+			// SEND /////////////////////////////////////////////////////////////////////
 			var socket = io.connect('http://localhost:1111');
-			var oneBit = function () {
-				socket.emit('one-bit', { from: '324324', to: 'dfg32' });
-				document.getElementById("one_bit_button").innerHTML = "SEND";
+			var sendOneBit = function () {
+				socket.emit('oneBit', { from: '324324', to: 'dfg32' });
+				document.getElementById("send_one_bit_button").innerHTML = "SEND";
 			};
+			// REGISTER /////////////////////////////////////////////////////////////////
+			var register = function () {
+				var emailtextfield = document.getElementById("register_text_field");
+				var email = emailtextfield.value;
+				email = email.trim();
+				socket.emit('newLove', email, function (loveid) {
+					if ((typeof (loveid) !== "undefined") && (loveid !== null) && (loveid !== "")) {
+						emailtextfield.value = "";
+						document.getElementById("register_message").innerHTML = "Registration Succeed!";
+					} else {
+						emailtextfield.value = "";
+						document.getElementById("register_message").innerHTML = "Registration Failed!";
+					}
+				});
+				return false;
+			};
+
+
+
+
+
+
+
+			// TESTING ///////////////////////////////////////////////////////////////////
+			/*$(function () {
+				$('#set-nickname').submit(function (ev) {
+					socket.emit('nickname', $('#nick').val(), function (set) {
+						if (!set) {
+							clear();
+							return $('#chat').addClass('nickname-set');
+						}
+						$('#nickname-err').css('visibility', 'visible');
+					});
+					return false;
+				});
+			});*/
+			
 			/*socket.on('news', function (data) {
 				console.log(data);
 			});*/
+			// socket.io specific code
+			//var socket = io.connect();
+
+			/*socket.on('connect', function () {
+				$('#chat').addClass('connected');
+			});
+			socket.on('announcement', function (msg) {
+				$('#lines').append($('<p>').append($('<em>').text(msg)));
+			});
+			socket.on('nicknames', function (nicknames) {
+				$('#nicknames').empty().append($('<span>Online: </span>'));
+				for (var i in nicknames) {
+					$('#nicknames').append($('<b>').text(nicknames[i]));
+				}
+			});
+			socket.on('user message', message);
+			socket.on('reconnect', function () {
+				$('#lines').remove();
+				message('System', 'Reconnected to the server');
+			});
+			socket.on('reconnecting', function () {
+				message('System', 'Attempting to re-connect to the server');
+			});
+			socket.on('error', function (e) {
+				message('System', e ? e : 'A unknown error occurred');
+			});
+			function message (from, msg) {
+				$('#lines').append($('<p>').append($('<b>').text(from), msg));
+			}*/
+
+			/*$('#send-message').submit(function () {
+					message('me', $('#message').val());
+					socket.emit('user message', $('#message').val());
+					clear();
+					$('#lines').get(0).scrollTop = 10000000;
+					return false;
+				});
+
+				function clear () {
+					$('#message').val('').focus();
+				};*/
 		</script>
 	</body>
 </html>
