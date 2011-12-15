@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="el">
 	<head>
-		<meta charset="UTF-8" />
+		<meta charset="UTF-8"/>
+		<!-- <link rel="stylesheet" type="text/css" href="main.css"/> -->
 		<title>One Bit Love</title>
 		<script src="/socket.io/socket.io.js"></script>
+		<style>
+			#one_bit_button {
+				margin: 0 auto;
+				width: 100px;
+				height: 100px;
+				background-color: #FF0000;
+				cursor: pointer;
+			}
+		</style>
 	</head>
 	<body>
-		hello
-		<!-- <div id="main_wrapper">
-			<div id="contacts_view">
-				<ul>
-					
-				</ul>
+		<div id="main_wrapper">
+			<h3>One Bit Love</h3>
+			<div id="send_view">
+				<div id="one_bit_button" onclick="oneBit();"></div>
 			</div>
-		</div> -->
+		</div>
 		<script>
 			/*var OBL;
 			OBL = {};
@@ -41,15 +49,13 @@
 				xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 				xmlhttp.send("pointX=" +  + "&pointY=" + );
 			};*/
-
-			var socket = io.connect('http://192.168.2.7');
-
-			on press button
-
-			socket.emit('one-bit', { from: '324324', to: 'dfg32' });
-/*			socket.on('news', function (data) {
+			var socket = io.connect('http://localhost:1111');
+			var oneBit = function () {
+				socket.emit('one-bit', { from: '324324', to: 'dfg32' });
+				document.getElementById("one_bit_button").innerHTML = "SEND";
+			};
+			/*socket.on('news', function (data) {
 				console.log(data);
-				
 			});*/
 		</script>
 	</body>
