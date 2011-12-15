@@ -33,8 +33,15 @@
 		<script>
 			// SEND /////////////////////////////////////////////////////////////////////
 			var socket = io.connect('http://localhost:1111');
+			socket.on('love', function (fromLove) {
+				console.log("love from " + fromLove);
+			});
+
 			var sendOneBit = function () {
-				socket.emit('oneBit', { to: '123' });
+				// send to '123' loveNode that has loveId 'V4BwM_t2STRBif9Tgbvqakl-hQg'
+				socket.emit('oneBit', { to: 'V4BwM_t2STRBif9Tgbvqakl-hQg' }, function(reply) {
+					console.log("oneBit reply = " + reply.code);
+				});
 				document.getElementById("send_one_bit_button").innerHTML = "SEND";
 			};
 			// REGISTER /////////////////////////////////////////////////////////////////

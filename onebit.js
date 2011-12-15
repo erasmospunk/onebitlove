@@ -47,12 +47,17 @@ io.sockets.on('connection', function (socket) {
         code  :  401, // Client Error, Unauthorized
         msg   :  "You didn't tell me who you are. Tell me with 'newLove'."
       });
+      return
     }
     var fromLoveId = socket.loveNode.loveId
     var toLoveNode = getLoveNode(toLove)
+    // See if this loveNode is online
+    console.log("toLoveNode.loveId = " + toLoveNode.loveId)
+    console.log("toLoveNode.sockets[0] = " + toLoveNode.sockets[0])
   	if (toLoveNode.sockets.length > 0) {
       toLoveNode.sockets.forEach(function(toSocket){
-        toSocket.emit("feed", {"from": fromLoveId});
+        console.debug("Send love to " + toLoveNode.loveId)
+        toSocket.emit("love", {"from": fromLoveId});
       });
     }
     toLoveNode.mailBox[fromLoveId] = new Date()
@@ -62,11 +67,11 @@ io.sockets.on('connection', function (socket) {
 
 
   socket.on('disconnect', function () {
-    if (!socket.loveId) return;
+    if (!socket.loveNode) return;
 
-    delete loveNodes[socket.loveId];
-    socket.broadcast.emit('announcement', socket.nickname + ' disconnected');
-    socket.broadcast.emit('nicknames', nicknames);
+    delete loveNodes[socket.loveNode.loveId];
+    // socket.broadcast.emit('announcement', socket.nickname + ' disconnected');
+    // socket.broadcast.emit('nicknames', nicknames);
   });
 });
 
@@ -76,6 +81,8 @@ function attach(socket, loveNode) {
   socket.loveNode = loveNode
   // Save socket in loveNode to send notification to all the active sockets
   loveNode.sockets.push(socket)
+  // loveNode.sockets[0] = socket
+  console.log("loveNode.sockets[0] = " + loveNode.sockets[0])
 }
 
 function registerLoveNode(email) {
