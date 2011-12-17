@@ -18,10 +18,10 @@ app.get('/', function (req, res) {
 });
 // Respond to connections
 io.sockets.on('connection', function (socket) {
-	socket.on('newLove', function (email, fn) {
-		console.log("Registering " + email)
-		// Register loveNode's email
-		var loveNode = registerLoveNode(email)
+	socket.on('newLove', function (name, fn) {
+		console.log("Registering " + name)
+		// Register loveNode's name
+		var loveNode = registerLoveNode(name)
 		// Create a logical connection
 		attach(socket, loveNode)
 		// Reply OK and send loveNode's loveId
@@ -31,12 +31,40 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('myloveId', function (loveId, fn) {
-		console.log("LoveNode connected with loveId " + loveId)
-		// Get loveNode and create a logical connection
-		attach(socket, getLoveNode(loveId))
+	socket.on('attach', function (loveId, fn) {
+		// Get loveNode
+		loveNode = getLoveNode(loveId)
+		//if not exists
+		if (!loveNode) {
+			fn({
+				code: 404,
+				msg: "LoveNode not found. Create it with 'newLove' event"
+			});
+			return
+		}
+		// Create a logical connection
+		attach(socket, loveNode)
+		console.log("Attached to LoveNode with id " + loveId)
 		// Reply OK
-		fn({ code: 200 });
+		fn({ code: 200 })
+	});
+
+	socket.on('whois', function (loveId, fn) {
+		// Get loveNode
+		loveNode = getLoveNode(loveId)
+		//if not exists
+		if (!loveNode) {
+			fn({
+				code: 404,
+				msg: "LoveNode not found."
+			});
+			return
+		}
+		// Reply OK
+		fn({
+			code: 200,
+			name:	loveNode.name 
+		});
 	});
 
 	socket.on('oneBit', function (oneBit, fn) {
@@ -90,12 +118,20 @@ function attach(socket, loveNode) {
 	socket.join(loveNode.loveId);
 }
 
-function registerLoveNode(email) {
-	/* Register a loveNode. Similar to getLoveNode() but saves email if needed */
-	var loveId = getLoveId(email)
+function registerLoveNode(name) {
+	/* Register a loveNode. Similar to getLoveNode() but saves name if needed */
+	var loveId = getLoveId(name)
 	var loveNode = getLoveNode(loveId)
-	if (!loveNode.email) {
-		loveNode.email = email
+	//if not exists
+	if (!loveNode) {
+		loveNode = { 
+			loveId:		loveId,
+			name:			name,
+			sockets:	[],
+			mailBox:	{}
+		};
+		//put it in the database
+		loveNodes[loveId] = loveNode
 	}
 	// Return new or old loveNode
 	return loveNode
@@ -104,7 +140,7 @@ function registerLoveNode(email) {
 function getLoveNode(loveId) {
 	/* Creates a loveNode or gets existing */
 	var loveNode = loveNodes[loveId]
-	//if not exists
+	//TEMPORARY create new if not exists
 	if (!loveNode) {
 		loveNode = { 
 			loveId:		loveId,
@@ -118,11 +154,11 @@ function getLoveNode(loveId) {
 	return loveNode
 }
 
-function getLoveId (email) {
+function getLoveId (name) {
 	// Hash-based Message Authentication Code using SHA1
 	var hmac = crypto.createHmac('sha1', hmac_key)
 	// Put the data for calculation
-	hmac.update(email)
+	hmac.update(name)
 	// Encode hmac to base64
 	var hmacBase64 = hmac.digest('base64')
 	//replace illegal chars for URL

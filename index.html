@@ -35,7 +35,7 @@
 			var socket = io.connect('http://localhost:1111');
 			socket.on('connect', function () {
 				// TODO: get id from cookie if exists
-				socket.emit('myloveId', 'V4BwM_t2STRBif9Tgbvqakl-hQg', function (reply) {
+				socket.emit('attach', 'V4BwM_t2STRBif9Tgbvqakl-hQg', function (reply) {
 					console.log(reply); // data will be 'woot'
 				});
 			});
@@ -52,16 +52,16 @@
 			};
 			// REGISTER /////////////////////////////////////////////////////////////////
 			var register = function () {
-				var emailtextfield = document.getElementById("register_text_field");
-				var email = emailtextfield.value;
-				email = email.trim();
-				socket.emit('newLove', email, function (reply) {
+				var nametextfield = document.getElementById("register_text_field");
+				var name = nametextfield.value;
+				name = name.trim();
+				socket.emit('newLove', name, function (reply) {
 					if ((typeof (reply) !== "undefined") && (reply !== null) && (reply !== "") && (reply !== " ")) {
-						emailtextfield.value = "";
+						nametextfield.value = "";
 						//console.log(reply);
 						document.getElementById("register_message").innerHTML = "Registration Succeed! Your \"Love ID\" is: " + reply.loveId;
 					} else {
-						emailtextfield.value = "";
+						nametextfield.value = "";
 						document.getElementById("register_message").innerHTML = "Registration Failed!";
 					}
 				});
