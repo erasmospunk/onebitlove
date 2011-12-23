@@ -16,6 +16,12 @@ app.listen(port)
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
+
+// Configure Socket.io log level
+io.configure(function () { 
+  io.set("log level", 2); 
+});
+
 // Respond to connections
 io.sockets.on('connection', function (socket) {
 	socket.on('newLove', function (name, fn) {
@@ -44,7 +50,7 @@ io.sockets.on('connection', function (socket) {
 		}
 		// Create a logical connection
 		attach(socket, loveNode)
-		console.log("Attached to LoveNode with id " + loveId)
+		console.log(socket.id + " attached to a LoveNode with id " + loveId)
 		// Reply OK
 		fn({ code: 200 })
 	});
