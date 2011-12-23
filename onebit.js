@@ -4,7 +4,7 @@ var app = require('express').createServer()
 
 var hmac_key =
 	"9iezi&s-Iavi4ri_s8o&-r=emLaylethie2r8eT@a43as!laW$oedri*CiAfo?G&"
-	, port = 1111;
+	, port = process.env.PORT || 1111;
 
 /* Database */
 var loveNodes = {}
