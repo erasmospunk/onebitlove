@@ -17,9 +17,13 @@ app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
 
-// Configure Socket.io log level
+// Configure Socket.io 
 io.configure(function () { 
+  // Display info, warn & errors (debug is default = 3)
   io.set("log level", 2); 
+  // Heroku doesn't support websocket at the moment, use long polling
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10);
 });
 
 // Respond to connections
