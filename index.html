@@ -17,6 +17,24 @@
 				background-color: #FF0000;
 				cursor: pointer;
 			}
+			body.color0  { background-color: hsl(    0, 100%, 51% ); }
+			body.color1  { background-color: hsl(    0,  90%, 51% ); }
+			body.color2  { background-color: hsl(    0,  80%, 51% ); }
+			body.color3  { background-color: hsl(    0,  70%, 51% ); }
+			body.color4  { background-color: hsl(    0,  60%, 51% ); }
+			body.color5  { background-color: hsl(    0,  50%, 51% ); }
+			body.color6  { background-color: hsl(    0,  40%, 51% ); }
+			body.color7  { background-color: hsl(    0,  30%, 51% ); }
+			body.color8  { background-color: hsl(    0,  20%, 51% ); }
+			body.color9  { background-color: hsl(    0,  10%, 51% ); }
+			body.color10 { background-color: hsl(    0,   0%, 51% ); }
+
+			body {
+							-webkit-transition: background-color 1s linear;
+							-moz-transition: background-color 1s linear;
+							-o-transition: background-color 1s linear;
+							transition: background-color 1s linear;
+			}
 		</style>
 	</head>
 	<body>
@@ -36,6 +54,17 @@
 		</div>
 		<script>
 			// SEND /////////////////////////////////////////////////////////////////////
+			var colorT = 1000;
+
+			function changeColor() {
+				if (colorT <= 1000) {
+					document.body.className = 'color' + Math.round(colorT/100);
+				}
+				colorT++;
+				setTimeout( changeColor, 100 )
+			}
+			changeColor();
+
 			var socket = io.connect('/');
 			socket.on('connect', function () {
 				// TODO: get id from cookie if exists
@@ -43,7 +72,9 @@
 					console.log(reply); // data will be 'woot'
 				});
 			});
+			// When recieved a notification
 			socket.on('love', function (from) {
+				colorT = 0;
 				console.log("love from " + from.loveId);
 			});
 

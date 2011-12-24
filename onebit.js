@@ -98,7 +98,7 @@ io.sockets.on('connection', function (socket) {
 			// Send event love to all connected sockets
 			socket.broadcast.to(to.loveId)
 				.emit("love", {loveId: from.loveId});
-			// Save the time of the latest OneBit for the destination loveNode 
+			// Save the time of the latest OneBit for the destination loveNode
 			to.mailBox[from.loveId] = new Date()
 		});
 		// Success, Accepted 
@@ -114,6 +114,18 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
+function getMailbox(loveNode) {
+	// Create a timestamp and add a diff method
+	var now = new Date();
+	now.diff = timeDiff;
+
+}
+
+function timeDiff(date) {
+	return Math.abs(Math.round(date.getTime() / 1000) - Math.round(this.getTime() / 1000));
+}
+
+
 function attach(socket, loveNode) {
 	/* Attaches the socket to the loveNode */
 
@@ -122,9 +134,9 @@ function attach(socket, loveNode) {
 		// Disconnect
 		socket.leave(socket.loveNode.loveId);
 	}
-	// Save to loveNode to socket to detect from where we get a notification
+	// Save in socket the loveNode to detect from where we get a notification
 	socket.loveNode = loveNode
-	// Save socket in loveNode to send notification to all the active sockets
+	// Join a room, all the connections with this loveId will get a notification
 	socket.join(loveNode.loveId);
 }
 
@@ -137,7 +149,6 @@ function registerLoveNode(name) {
 		loveNode = { 
 			loveId:		loveId,
 			name:			name,
-			sockets:	[],
 			mailBox:	{}
 		};
 		//put it in the database
@@ -154,7 +165,6 @@ function getLoveNode(loveId) {
 	if (!loveNode) {
 		loveNode = { 
 			loveId:		loveId,
-			sockets:	[],
 			mailBox:	{}
 		};
 		//put it in the database
