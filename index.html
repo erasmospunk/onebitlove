@@ -53,17 +53,37 @@
 			</div>
 		</div>
 		<script>
-			// SEND /////////////////////////////////////////////////////////////////////
-			var colorT = 1000;
+			// SEND /////////////////////////////////////////////////////////////////
+			var color = 0;
+			var seconds = Infinity;
 
-			function changeColor() {
-				if (colorT <= 1000) {
-					document.body.className = 'color' + Math.round(colorT/100);
-				}
-				colorT++;
-				setTimeout( changeColor, 100 )
+			setInterval(updateTime, 1000);
+
+			function updateTime() {
+				seconds++;
+				updateColors();
 			}
-			changeColor();
+
+			function updateColors() {
+				var button = document.getElementById("send_one_bit_button");
+				//button.style.backgroundColor = "hsl(0, " + (100 - Math.round(colorT/10)) + "%, 51% )";
+				button.style.backgroundColor =
+						"hsl("+ color +", " + getLevel() + "%, 51% )";
+			}
+
+			function getLevel() {
+				var level;
+
+				if (seconds > 80) {
+					level = 80;
+				}
+				else {
+					level = seconds;
+				}
+
+				return 100 - level;
+			}
+
 
 			var socket = io.connect('/');
 			socket.on('connect', function () {
@@ -74,18 +94,31 @@
 			});
 			// When recieved a notification
 			socket.on('love', function (from) {
-				colorT = 0;
-				console.log("love from " + from.loveId);
+				seconds = 0;
+				color = from.sync;
+				//color += Math.round(Math.random() * 10) + 55;
+				//color %= 360;
+				updateColors();
+				console.log("love from " + from.loveId + ", color = " + from.sync);
 			});
 
 			var sendOneBit = function () {
-				// send to '123' loveNode that has loveId 'V4BwM_t2STRBif9Tgbvqakl-hQg'
-				socket.emit('oneBit', { to: ['V4BwM_t2STRBif9Tgbvqakl-hQg'] }, function(reply) {
-					console.log("oneBit reply = " + reply.code);
-				});
-				document.getElementById("send_one_bit_button").innerHTML = "SEND";
+				var start = new Date();
+				color += Math.round(Math.random() * 10) + 55;
+				color %= 360;
+				updateColors();
+				// send to '123' loveNode that has id 'V4BwM_t2STRBif9Tgbvqakl-hQg'
+				socket.emit(
+						'oneBit',
+						{ to: ['V4BwM_t2STRBif9Tgbvqakl-hQg'], sync: color},
+						function(reply) {
+							console.log(
+									"oneBit reply = " + reply.code +
+									", speed = " + (new Date().getTime() - start.getTime()));
+						});
+				//document.getElementById("send_one_bit_button").innerHTML = "SEND";
 			};
-			// REGISTER /////////////////////////////////////////////////////////////////
+			// REGISTER /////////////////////////////////////////////////////////////
 			var register = function () {
 				var nametextfield = document.getElementById("register_text_field");
 				var name = nametextfield.value;

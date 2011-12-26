@@ -7,11 +7,11 @@ var hmac_key =
 	, port = process.env.PORT || 1111;
 
 /* Database */
-var loveNodes = {}
+var loveNodes = {};
 
 /* Start application */
 // Start web server
-app.listen(port)
+app.listen(port);
 // Index.html
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
@@ -29,11 +29,11 @@ io.configure(function () {
 // Respond to connections
 io.sockets.on('connection', function (socket) {
 	socket.on('newLove', function (name, fn) {
-		console.log("Registering " + name)
+		console.log("Registering " + name);
 		// Register loveNode's name
-		var loveNode = registerLoveNode(name)
+		var loveNode = registerLoveNode(name);
 		// Create a logical connection
-		attach(socket, loveNode)
+		attach(socket, loveNode);
 		// Reply OK and send loveNode's loveId
 		fn({
 			code:	201, // Success, Created
@@ -88,7 +88,8 @@ io.sockets.on('connection', function (socket) {
 			return
 		}
 		// Origin of the event
-		var from = socket.loveNode
+		var from = socket.loveNode;
+		var currentSync = oneBit.sync;
 		// Multiple receptions
 		oneBit.to.forEach(function(toLove) {
 
@@ -97,7 +98,7 @@ io.sockets.on('connection', function (socket) {
 			var to = getLoveNode(toLove)
 			// Send event love to all connected sockets
 			socket.broadcast.to(to.loveId)
-				.emit("love", {loveId: from.loveId});
+				.emit("love", { loveId: from.loveId, sync: currentSync });
 			// Save the time of the latest OneBit for the destination loveNode
 			to.mailBox[from.loveId] = new Date()
 		});
