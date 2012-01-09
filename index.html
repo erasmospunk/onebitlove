@@ -174,7 +174,8 @@
 
 			var sendOneBit = function () {
 				var start = new Date();
-				outColor += Math.round(Math.random() * 10) + 55;
+				// Send a random color that is away ~65 degrees in the color wheel
+				outColor += Math.floor(Math.random() * 10) + 60;
 				outColor %= 360;
 				outSeconds = 0;
 				
