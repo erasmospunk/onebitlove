@@ -16,6 +16,15 @@ app.listen(port);
 app.get('/', function (req, res) {
 	res.sendfile(__dirname + '/index.html');
 });
+// Serve files like css and js in files folder
+// /files/* is accessed via req.params[0]
+// but here we name it :file
+app.get('/js/:file(*)', function(req, res, next){
+  res.sendfile(__dirname + '/js/' + req.params.file);
+});
+app.get('/css/:file(*)', function(req, res, next){
+  res.sendfile(__dirname + '/css/' + req.params.file);
+});
 
 // Configure Socket.io 
 io.configure(function () { 

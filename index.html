@@ -1,16 +1,77 @@
 <!DOCTYPE html>
 <html lang="el">
 	<head>
-		<meta charset="UTF-8"/>
+		<meta charset="utf-8"/>
 		<!-- <link rel="stylesheet" type="text/css" href="main.css"/> -->
 		<title>One Bit Love</title>
+		<link rel="stylesheet" href="/css/style.css" />
     <!-- socket.io from CDN
     <script src="http://cdn.socket.io/stable/socket.io.js"></script>
     -->
 
-		<script src="/socket.io/socket.io.js"></script>
 		<style>
-			#send_one_bit_button {
+			#incoming {
+				width: 10em;
+				height: 10em;
+				margin: 0.5em;
+				float: left;
+				overflow: hidden;
+				position: relative;
+				background: #888;
+				color: #222;
+
+				-webkit-border-top-right-radius: 4em;
+				-moz-border-radius-topright: 4em;
+				border-top-right-radius: 4em;
+
+				-webkit-border-top-left-radius: 4em;
+				-moz-border-radius-topleft: 4em;
+				border-top-left-radius: 4em;
+
+				-webkit-border-bottom-left-radius: 4em;
+				-moz-border-radius-bottomleft: 4em;
+				border-bottom-left-radius: 4em;
+
+				-webkit-transition: background-color 200ms linear;
+				-moz-transition: background-color 200ms linear;
+				-o-transition: background-color 200ms linear;
+				transition: background-color 200ms linear;
+			}
+
+			#outgoing {
+				width: 3em;
+				height: 3em;
+				margin: 2.5em;
+				float: left;
+				overflow: hidden;
+				position: relative;
+				background: #888;
+				color: #222;
+
+				-webkit-border-top-right-radius: 1.5em;
+				-moz-border-radius-topright: 1.5em;
+				border-top-right-radius: 1.5em;
+
+				-webkit-border-bottom-right-radius: 1.5em;
+				-moz-border-radius-bottomright: 1.5em;
+				border-bottom-right-radius: 1.5em;
+
+				-webkit-border-top-left-radius: 1.5em;
+				-moz-border-radius-topleft: 1.5em;
+				border-top-left-radius: 1.5em;
+
+				-webkit-border-bottom-left-radius: 1.5em;
+				-moz-border-radius-bottomleft: 1.5em;
+				border-bottom-left-radius: 1.5em;
+
+				-webkit-transition: background-color 200ms linear;
+				-moz-transition: background-color 200ms linear;
+				-o-transition: background-color 200ms linear;
+				transition: background-color 200ms linear;
+			}
+
+
+			#incoming_ {
 				margin: 0 auto;
 				width: 100px;
 				height: 100px;
@@ -21,13 +82,18 @@
 				-o-transition: background-color 200ms linear;
 				transition: background-color 200ms linear;
 			}
+			#register_view {
+				visibility:hidden;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="main_wrapper">
 			<h3>One Bit Love</h3>
 			<div id="send_view">
-				<div id="send_one_bit_button" onclick="sendOneBit();"></div>
+				<div id="incoming" onclick="sendOneBit();">
+					<div id="outgoing"></div>
+				</div>
 			</div>
 
 			<div id="register_view">
@@ -38,33 +104,51 @@
 				<div id="register_message"></div>
 			</div>
 		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/jquery-1.7.1.min.js"></script>
+		<script src="/js/jquery.isotope.min.js"></script>
 		<script>
+			// jquery.isotope init
+			$(function(){
+				var $container = $('#send_view');
+				$container.isotope({
+					itemSelector: '#incoming'
+				});
+			});
+
 			// SEND /////////////////////////////////////////////////////////////////
 			var color = 0;
+			var inColor;
+			var outColor = 0;
 			var seconds = Infinity;
+			var outSeconds = Infinity;
 
 			setInterval(updateTime, 1000);
 
 			function updateTime() {
 				seconds++;
+				outSeconds++;
 				updateColors();
 			}
 
 			function updateColors() {
-				var button = document.getElementById("send_one_bit_button");
-				//button.style.backgroundColor = "hsl(0, " + (100 - Math.round(colorT/10)) + "%, 51% )";
+				var button = document.getElementById("incoming");
 				button.style.backgroundColor =
-						"hsl("+ color +", " + getLevel() + "%, 51% )";
+						"hsl("+ color +", " + getLevel(seconds) + "%, 50% )";
+
+				var outgoing = document.getElementById("outgoing");
+				outgoing.style.backgroundColor =
+						"hsl("+ outColor +", " + getLevel(outSeconds) + "%, 50% )";
 			}
 
-			function getLevel() {
+			function getLevel(secs) {
 				var level;
 
-				if (seconds > 80) {
+				if (secs > 80) {
 					level = 80;
 				}
 				else {
-					level = seconds;
+					level = secs;
 				}
 
 				return 100 - level;
@@ -90,19 +174,22 @@
 
 			var sendOneBit = function () {
 				var start = new Date();
-				color += Math.round(Math.random() * 10) + 55;
-				color %= 360;
+				outColor += Math.round(Math.random() * 10) + 55;
+				outColor %= 360;
+				outSeconds = 0;
+				
 				updateColors();
+
 				// send to '123' loveNode that has id 'V4BwM_t2STRBif9Tgbvqakl-hQg'
 				socket.emit(
 						'oneBit',
-						{ to: ['V4BwM_t2STRBif9Tgbvqakl-hQg'], sync: color},
+						{ to: ['V4BwM_t2STRBif9Tgbvqakl-hQg'], sync: outColor},
 						function(reply) {
 							console.log(
 									"oneBit reply = " + reply.code +
 									", speed = " + (new Date().getTime() - start.getTime()));
 						});
-				//document.getElementById("send_one_bit_button").innerHTML = "SEND";
+				//document.getElementById("incoming").innerHTML = "SEND";
 			};
 			// REGISTER /////////////////////////////////////////////////////////////
 			var register = function () {
@@ -121,11 +208,6 @@
 				});
 				return false;
 			};
-
-
-
-
-
 
 
 			// TESTING ///////////////////////////////////////////////////////////////////
