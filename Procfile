@@ -1,1 +1,1 @@
-web: node onebit.js
+web: node server.js
