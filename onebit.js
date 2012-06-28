@@ -10,6 +10,7 @@ var hmac_key =
 var loveNodes = {};
 
 /* Start application */
+console.log("Starting 1bitlove on http://localhost:"+port);
 // Start web server
 app.listen(port);
 // Index.html
@@ -31,8 +32,8 @@ io.configure(function () {
   // Display info, warn & errors (debug is default = 3)
   io.set("log level", 2); 
   // Heroku doesn't support websocket at the moment, use long polling
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10);
+  //io.set("transports", ["xhr-polling"]); 
+  //io.set("polling duration", 10);
 });
 
 // Respond to connections
