@@ -113,6 +113,7 @@
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/jquery-1.7.1.min.js"></script>
 		<script src="/js/jquery.isotope.min.js"></script>
+		<script src="/js/onebitlove.js"></script>
 		<script>
 			// jquery.isotope init
 			$(function(){
@@ -122,99 +123,35 @@
 				});
 			});
 
-			// SEND /////////////////////////////////////////////////////////////////
-			var color = 0;
-			var inColor;
-			var outColor = 0;
-			var seconds = Infinity;
-			var outSeconds = Infinity;
 
-			setInterval(updateTime, 1000);
+			var onebitServer = '/';
 
-			function updateTime() {
-				seconds++;
-				outSeconds++;
-				updateColors();
-			}
-
-			function updateColors() {
+			var updateColors = function() {
 				var button = document.getElementById("incoming");
 				button.style.backgroundColor =
-						"hsl("+ color +", " + getLevel(seconds) + "%, 50% )";
+						"hsl("+ onebit.getColor() +", " + onebit.getLevel() + "%, 50% )";
 
 				var outgoing = document.getElementById("outgoing");
 				outgoing.style.backgroundColor =
-						"hsl("+ outColor +", " + getLevel(outSeconds) + "%, 50% )";
+						"hsl("+ onebit.getOutColor() +", " + onebit.getOutLevel() + "%, 50% )";
+			};
+
+			var connect = function() {
+				onebit.connect(onebitServer, updateColors);
 			}
 
-			function getLevel(secs) {
-				var level;
-
-				if (secs > 80) {
-					level = 80;
-				}
-				else {
-					level = secs;
-				}
-
-				return 100 - level;
+			var sendOneBit = function() {
+				// // Check if connected
+				// if (!onebit.isConnected()) {
+				// 	connect();
+				// }
+				onebit.sendOneBit();
 			}
 
 
-			var socket = io.connect('/');
-			socket.on('connect', function () {
-				// TODO: get id from cookie if exists
-				socket.emit('attach', 'V4BwM_t2STRBif9Tgbvqakl-hQg', function (reply) {
-					console.log(reply); // data will be 'woot'
-				});
-			});
-			// When recieved a notification
-			socket.on('love', function (from) {
-				seconds = 0;
-				color = from.sync;
-				//color += Math.round(Math.random() * 10) + 55;
-				//color %= 360;
-				updateColors();
-				console.log("love from " + from.loveId + ", color = " + from.sync);
-			});
+			connect();
 
-			var sendOneBit = function () {
-				var start = new Date();
-				// Send a random color that is away ~65 degrees in the color wheel
-				outColor += Math.floor(Math.random() * 10) + 60;
-				outColor %= 360;
-				outSeconds = 0;
-				
-				updateColors();
 
-				// send to '123' loveNode that has id 'V4BwM_t2STRBif9Tgbvqakl-hQg'
-				socket.emit(
-						'oneBit',
-						{ to: ['V4BwM_t2STRBif9Tgbvqakl-hQg'], sync: outColor},
-						function(reply) {
-							console.log(
-									"oneBit reply = " + reply.code +
-									", speed = " + (new Date().getTime() - start.getTime()));
-						});
-				//document.getElementById("incoming").innerHTML = "SEND";
-			};
-			// REGISTER /////////////////////////////////////////////////////////////
-			var register = function () {
-				var nametextfield = document.getElementById("register_text_field");
-				var name = nametextfield.value;
-				name = name.trim();
-				socket.emit('newLove', name, function (reply) {
-					if ((typeof (reply) !== "undefined") && (reply !== null) && (reply !== "") && (reply !== " ")) {
-						nametextfield.value = "";
-						//console.log(reply);
-						document.getElementById("register_message").innerHTML = "Registration Succeed! Your \"Love ID\" is: " + reply.loveId;
-					} else {
-						nametextfield.value = "";
-						document.getElementById("register_message").innerHTML = "Registration Failed!";
-					}
-				});
-				return false;
-			};
 
 
 			// TESTING ///////////////////////////////////////////////////////////////////
