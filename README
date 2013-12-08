@@ -1,0 +1,13 @@
+onebitlove
+==========
+
+A pet test project: Experiment with the idea of sending emotion to another person with one bit of information. 
+
+To run the server:
+
+    node server.js
+
+and then open http://localhost:1111 on multiple browser windows and see what happens. Ideally ask a friend to join from their device.
+
+
+License MIT

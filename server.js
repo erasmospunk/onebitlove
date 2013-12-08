@@ -8,23 +8,25 @@ var hmac_key =
 
 /* Database */
 var loveNodes = {};
+var options = {root: __dirname};
 
 /* Start application */
 console.log("Starting 1bitlove on http://localhost:"+port);
 // Start web server
 app.listen(port);
+
 // Index.html
 app.get('/', function (req, res) {
-	res.sendfile(__dirname + '/index.html');
+	res.sendfile('/index.html', options);
 });
 // Serve files like css and js in files folder
 // /files/* is accessed via req.params[0]
 // but here we name it :file
 app.get('/js/:file(*)', function(req, res, next){
-  res.sendfile(__dirname + '/js/' + req.params.file);
+  res.sendfile('/js/' + req.params.file, options);
 });
 app.get('/css/:file(*)', function(req, res, next){
-  res.sendfile(__dirname + '/css/' + req.params.file);
+  res.sendfile('/css/' + req.params.file, options);
 });
 
 // Configure Socket.io 
